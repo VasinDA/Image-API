@@ -1,16 +1,25 @@
+import re
 from django.db import models
-from django.utils import timezone
+from django.core.exceptions import ValidationError
+
+
+def validate_available_hights(value):
+    pattern = '^[0-9,]+$'
+    if not re.match(pattern, value):
+        raise ValidationError("Enter numbers")
+    return value
 
 class Plan(models.Model):
-    title = models.CharField(max_length=50)
-    image_url = models.ImageField(upload_to='images/')
-    expires_after = models.IntegerField(default=300)
-
-    def generate_link_with_expiration(self):
-        expires_at = timezone.now() + timezone.timedelta(seconds=self.expires_after)
-        link = Plan.objects.create(image_url=self.image_url, expires_at=expires_at)
-        return link.image_url
+    title = models.CharField(max_length=50, default='Basic')
+    original_image_link = models.BooleanField(default=False)
+    binary_image_link = models.BooleanField(default=False)
+    available_hights = models.CharField(max_length=200, 
+        help_text="Comma separated list of heights (e.g. '100,200')", 
+        validators =[validate_available_hights], default='')
     
+    def __str__(self):
+        return self.title
+
     
     
 
