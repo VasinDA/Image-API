@@ -4,7 +4,8 @@ from .models import Image
 
 
 class ImageSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        fields = ('id','image')
-        model = Image
+   user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+   class Meta:
+       model = Image
+       fields = ('id','image','user',)
