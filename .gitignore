@@ -1,6 +1,6 @@
 *.pyc
 __pycache__
-.venv/
+.venv/*
 django_project/__pycache__/
 plans/__pycache__/
 plans/__pycache__/admin.cpython-310.pyc
