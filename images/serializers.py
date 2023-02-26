@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from PIL import Image
-from .models import Image
+from .models import Images
 
 class ImageSerializer(serializers.ModelSerializer):
    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
@@ -8,7 +7,7 @@ class ImageSerializer(serializers.ModelSerializer):
    image = serializers.FileField(write_only=True)
    
    class Meta:
-       model = Image
+       model = Images
        fields = ('id','image','user', 'urls')
 
 

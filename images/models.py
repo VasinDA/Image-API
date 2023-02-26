@@ -8,7 +8,7 @@ def user_directory_path(instance, filename):
     filename = 'full.{0}'.format(ext)
     return 'user_{0}/{1}/{2}'.format(instance.user.id, uuid.uuid4(), filename)
 
-class Image(models.Model):
+class Images(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=user_directory_path, 
             validators=[FileExtensionValidator(['jpg','png', 'jpeg'])], max_length=512)
