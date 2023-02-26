@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "rest_framework",
+    'rest_framework',
+    'drf_spectacular',
     'accounts.apps.AccountsConfig',
     'plans.apps.PlansConfig',
     'images.apps.ImagesConfig',
@@ -135,5 +136,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+  "TITLE": "Image API Project",
+  "DESCRIPTION": "A sample Image API project",
+  "VERSION": "1.0.0",
 }
