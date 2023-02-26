@@ -3,6 +3,7 @@ from .models import Images
 import os
 from PIL import Image
 from plans.models import Plan
+from django.utils import timezone
 from django.shortcuts import  get_object_or_404
 from django.http import HttpResponse, FileResponse
 from rest_framework.permissions import IsAuthenticated
@@ -47,7 +48,10 @@ class BinaryView(generics.RetrieveAPIView):
         image = get_object_or_404(Images, pk=pk)
         image_url = image.image.url[1:]
         file_ext = image_url.split('.')[-1]
-        return FileResponse(open(image_url, 'rb'), as_attachment=True, filename='binary.{0}'.format(file_ext))
+        link_expiration_time = image.created_time + timezone.timedelta(seconds=image.expires_after)
+        if timezone.now() < link_expiration_time:
+            return FileResponse(open(image_url, 'rb'), as_attachment=True, filename='binary.{0}'.format(file_ext))
+        return HttpResponse(status=410)
 
 class ThumbnailView(generics.RetrieveAPIView):
     serializer_class = ImageSerializer
