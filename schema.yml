@@ -4,6 +4,149 @@ info:
   version: 1.0.0
   description: A sample Image API project
 paths:
+  /api/schema/:
+    get:
+      operationId: api_schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
   /api/v1/image:
     get:
       operationId: api_v1_image_list
@@ -58,93 +201,13 @@ paths:
       - api
       security:
       - basicAuth: []
-      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Image'
+                $ref: '#/components/schemas/DeteilImage'
           description: ''
-    put:
-      operationId: api_v1_image_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Image'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Image'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Image'
-        required: true
-      security:
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Image'
-          description: ''
-    patch:
-      operationId: api_v1_image_partial_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedImage'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedImage'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedImage'
-      security:
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Image'
-          description: ''
-    delete:
-      operationId: api_v1_image_destroy
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - api
-      security:
-      - basicAuth: []
-      - {}
-      responses:
-        '204':
-          description: No response body
   /api/v1/image/{id}/binary:
     get:
       operationId: api_v1_image_binary_retrieve
@@ -199,38 +262,7 @@ paths:
       - in: path
         name: pk1
         schema:
-          type: string
-        required: true
-      tags:
-      - api
-      security:
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Image'
-          description: ''
-  /api/v1/media/user_{id}/{pk1}/{pk2}:
-    get:
-      operationId: api_v1_media_user__retrieve
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: pk1
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: pk2
-        schema:
-          type: string
+          type: integer
         required: true
       tags:
       - api
@@ -298,93 +330,13 @@ paths:
       - image
       security:
       - basicAuth: []
-      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Image'
+                $ref: '#/components/schemas/DeteilImage'
           description: ''
-    put:
-      operationId: image_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - image
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Image'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Image'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Image'
-        required: true
-      security:
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Image'
-          description: ''
-    patch:
-      operationId: image_partial_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - image
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedImage'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedImage'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedImage'
-      security:
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Image'
-          description: ''
-    delete:
-      operationId: image_destroy
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - image
-      security:
-      - basicAuth: []
-      - {}
-      responses:
-        '204':
-          description: No response body
   /image/{id}/binary:
     get:
       operationId: image_binary_retrieve
@@ -439,7 +391,7 @@ paths:
       - in: path
         name: pk1
         schema:
-          type: string
+          type: integer
         required: true
       tags:
       - image
@@ -453,39 +405,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/Image'
           description: ''
-  /media/user_{id}/{pk1}/{pk2}:
-    get:
-      operationId: media_user__retrieve
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: pk1
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: pk2
-        schema:
-          type: string
-        required: true
-      tags:
-      - media
-      security:
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Image'
-          description: ''
 components:
   schemas:
+    DeteilImage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        urls:
+          type: string
+          format: uri
+          readOnly: true
+      required:
+      - id
+      - urls
     Image:
       type: object
       properties:
@@ -504,20 +438,6 @@ components:
       - id
       - image
       - urls
-    PatchedImage:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        image:
-          type: string
-          format: uri
-          writeOnly: true
-        urls:
-          type: string
-          format: uri
-          readOnly: true
   securitySchemes:
     basicAuth:
       type: http

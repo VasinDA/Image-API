@@ -1,13 +1,14 @@
 from rest_framework import generics
 from .models import Images
 import os
+from rest_framework.reverse import reverse
 from PIL import Image
 from plans.models import Plan
 from django.utils import timezone
 from django.shortcuts import  get_object_or_404
 from django.http import HttpResponse, FileResponse
 from rest_framework.permissions import IsAuthenticated
-from .serializers import ImageSerializer
+from .serializers import ImageSerializer, DeteilImageSerializer
 
 class ListImage(generics.ListCreateAPIView):
     serializer_class = ImageSerializer
@@ -19,19 +20,37 @@ class ListImage(generics.ListCreateAPIView):
         available_hights = plan.available_hights.split(',')
         for image in image_ojects:
             urls = []
+            url  = reverse('thumbnail_link',kwargs={'pk':image.id, 'pk1':200}, request=self.request)
+            print(url)
             for hight in available_hights:
-                urls.append('http://127.0.0.1:8000/api/v1/image/{0}/thumbnail/{1}'.format(image.id, hight))
+                urls.append(reverse('thumbnail_link',kwargs={'pk':image.id, 'pk1':hight}, request=self.request))
             if plan.original_image_link == 1:
-                urls.append(('http://127.0.0.1:8000/api/v1/image/{0}/original'.format(image.id)))
+                urls.append(reverse('image_original',kwargs={'pk':image.id}, request=self.request))
             if plan.binary_image_link == 1:
-                urls.append(('http://127.0.0.1:8000/api/v1/image/{0}/binary'.format(image.id)))
+                urls.append(reverse('image_binary',kwargs={'pk':image.id}, request=self.request))
             image.urls = urls
             image.save()
         return image_ojects
 
-class DetailsImage(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Images.objects.all()
-    serializer_class = ImageSerializer
+class DetailsImage(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = DeteilImageSerializer
+    def get_object(self):
+        pk = self.kwargs.get('pk')
+        user = self.request.user
+        image = get_object_or_404(Images, pk=pk)
+        plan = Plan.objects.get(id=user.plan_id)
+        available_hights = plan.available_hights.split(',')
+        urls = []
+        for hight in available_hights:
+            urls.append(reverse('thumbnail_link',kwargs={'pk':image.id, 'pk1':hight}, request=self.request))
+        if plan.original_image_link == 1:
+            urls.append(reverse('image_original',kwargs={'pk':image.id}, request=self.request))
+        if plan.binary_image_link == 1:
+            urls.append(reverse('image_binary',kwargs={'pk':image.id}, request=self.request))
+        image.urls = urls
+        image.save()
+        return image
 
 class OriginalView(generics.RetrieveAPIView):
     serializer_class = ImageSerializer
@@ -76,12 +95,3 @@ class ThumbnailView(generics.RetrieveAPIView):
                 return HttpResponse(f.read(), content_type=content_type_image)
         except IOError:
             raise IOError("Original file not available") 
-
-class LinkView(generics.RetrieveAPIView):
-    serializer_class = ImageSerializer
-    def get(self, request, pk, pk1, pk2):
-        image = get_object_or_404(Images, image='user_{0}/{1}/{2}'.format(pk, pk1, pk2))
-        image_url = image.image.url[1:]
-        content_type_image = 'image/{0}'.format(image_url.split('.')[-1])
-        with open(image_url, 'rb') as f:
-            return HttpResponse(f.read(), content_type=content_type_image)

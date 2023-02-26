@@ -10,5 +10,11 @@ class ImageSerializer(serializers.ModelSerializer):
        model = Images
        fields = ('id','image','user', 'urls')
 
-
+class DeteilImageSerializer(serializers.ModelSerializer):
+   user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+   urls = serializers.URLField(read_only=True, allow_blank=True)
+   
+   class Meta:
+       model = Images
+       fields = ('id','user', 'urls')
 
