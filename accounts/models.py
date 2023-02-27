@@ -3,4 +3,4 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
-    plan = models.ForeignKey('plans.Plan', on_delete=models.PROTECT, default='Basic')
+    plan = models.ForeignKey('plans.Plan', on_delete=models.PROTECT, default= 'Basic')

@@ -24,9 +24,9 @@ class ListImage(generics.ListCreateAPIView):
             print(url)
             for hight in available_hights:
                 urls.append(reverse('thumbnail_link',kwargs={'pk':image.id, 'pk1':hight}, request=self.request))
-            if plan.original_image_link == 1:
+            if plan.original_image_link == True:
                 urls.append(reverse('image_original',kwargs={'pk':image.id}, request=self.request))
-            if plan.binary_image_link == 1:
+            if plan.binary_image_link == True:
                 urls.append(reverse('image_binary',kwargs={'pk':image.id}, request=self.request))
             image.urls = urls
             image.save()
@@ -44,9 +44,9 @@ class DetailsImage(generics.RetrieveAPIView):
         urls = []
         for hight in available_hights:
             urls.append(reverse('thumbnail_link',kwargs={'pk':image.id, 'pk1':hight}, request=self.request))
-        if plan.original_image_link == 1:
+        if plan.original_image_link == True:
             urls.append(reverse('image_original',kwargs={'pk':image.id}, request=self.request))
-        if plan.binary_image_link == 1:
+        if plan.binary_image_link == True:
             urls.append(reverse('image_binary',kwargs={'pk':image.id}, request=self.request))
         image.urls = urls
         image.save()

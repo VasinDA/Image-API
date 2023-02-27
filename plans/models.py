@@ -10,7 +10,7 @@ def validate_available_hights(value):
     return value
 
 class Plan(models.Model):
-    title = models.CharField(max_length=50, default='Basic')
+    title = models.CharField(max_length=50)
     original_image_link = models.BooleanField(default=False)
     binary_image_link = models.BooleanField(default=False)
     available_hights = models.CharField(max_length=200, 
