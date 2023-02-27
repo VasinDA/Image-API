@@ -94,4 +94,4 @@ class ThumbnailView(generics.RetrieveAPIView):
             with open(full_image_path, 'rb') as f:
                 return HttpResponse(f.read(), content_type=content_type_image)
         except IOError:
-            raise IOError("Original file not available") 
+            return HttpResponse(status=404)
