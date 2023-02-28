@@ -22,4 +22,4 @@ class PlansTest(TestCase):
                 title='Basic', 
                 original_image_link = False, 
                 binary_image_link = False, 
-                available_hights = value), "Enter numbers")
+                available_hights = value), "It should be integers only (e.g. '200' or '100,200')")

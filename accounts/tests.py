@@ -9,13 +9,8 @@ class AccountTest(TestCase):
             original_image_link = False, 
             binary_image_link = False, 
             available_hights = '200')
-        Plan.objects.create(
-            title='Premium', 
-            original_image_link = False, 
-            binary_image_link = False, 
-            available_hights = '200,400')
         plan_user_default=CustomUser._meta.get_field('plan').get_default()
-        self.default_plan = Plan.objects.get(title=plan_user_default)
+        self.default_plan = Plan.objects.get(id=plan_user_default)
         self.user = CustomUser.objects.create(
             username='test', 
             email='test@example.com', 
@@ -24,4 +19,4 @@ class AccountTest(TestCase):
             )
         
     def test_user_default_plan(self):
-        self.assertEqual(self.user.plan.title, 'Basic')
+        self.assertEqual(self.user.plan.id, 1)

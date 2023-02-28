@@ -1,5 +1,5 @@
 from rest_framework import generics
-from .models import Images
+from .models import APIImage
 import os
 from rest_framework.reverse import reverse
 from PIL import Image
@@ -15,13 +15,11 @@ class ListImage(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
         user = self.request.user
-        image_ojects = Images.objects.filter(user=user)
+        image_ojects = APIImage.objects.filter(user=user)
         plan = Plan.objects.get(id=user.plan_id)
         available_hights = plan.available_hights.split(',')
         for image in image_ojects:
             urls = []
-            url  = reverse('thumbnail_link',kwargs={'pk':image.id, 'pk1':200}, request=self.request)
-            print(url)
             for hight in available_hights:
                 urls.append(reverse('thumbnail_link',kwargs={'pk':image.id, 'pk1':hight}, request=self.request))
             if plan.original_image_link == True:
@@ -38,7 +36,7 @@ class DetailsImage(generics.RetrieveAPIView):
     def get_object(self):
         pk = self.kwargs.get('pk')
         user = self.request.user
-        image = get_object_or_404(Images, pk=pk)
+        image = get_object_or_404(APIImage, pk=pk)
         plan = Plan.objects.get(id=user.plan_id)
         available_hights = plan.available_hights.split(',')
         urls = []
@@ -55,7 +53,7 @@ class DetailsImage(generics.RetrieveAPIView):
 class OriginalView(generics.RetrieveAPIView):
     serializer_class = ImageSerializer
     def get(self, request, pk):
-        image =  get_object_or_404(Images, pk=pk)
+        image =  get_object_or_404(APIImage, pk=pk)
         image_url = image.image.url[1:]
         content_type_image = 'image/{0}'.format(image_url.split('.')[-1])
         with open(image_url, 'rb') as f:
@@ -64,10 +62,10 @@ class OriginalView(generics.RetrieveAPIView):
 class BinaryView(generics.RetrieveAPIView):
     serializer_class = ImageSerializer
     def get(self, request, pk):
-        image = get_object_or_404(Images, pk=pk)
+        image = get_object_or_404(APIImage, pk=pk)
         image_url = image.image.url[1:]
         file_ext = image_url.split('.')[-1]
-        link_expiration_time = image.created_time + timezone.timedelta(seconds=image.expires_after)
+        link_expiration_time = image.created_at + timezone.timedelta(seconds=image.expires_after)
         if timezone.now() < link_expiration_time:
             return FileResponse(open(image_url, 'rb'), as_attachment=True, filename='binary.{0}'.format(file_ext))
         return HttpResponse(status=410)
@@ -75,7 +73,7 @@ class BinaryView(generics.RetrieveAPIView):
 class ThumbnailView(generics.RetrieveAPIView):
     serializer_class = ImageSerializer
     def get(self, request, pk, pk1):
-        image = get_object_or_404(Images, pk=pk)
+        image = get_object_or_404(APIImage, pk=pk)
         image_url = image.image.url[:-8]
         file_ext = image.image.url[1:].split('.')[-1]
         content_type_image = 'image/{0}'.format(file_ext)
@@ -86,8 +84,8 @@ class ThumbnailView(generics.RetrieveAPIView):
         try:
             original_image = Image.open('{0}full.{1}'.format(image_url[1:], file_ext))
             height_size = int(pk1)
-            height_percent = (height_size / float(original_image.size[0]))
-            width_size = int((float(original_image.size[0]) * float(height_percent)))
+            height_ratio = (height_size / float(original_image.size[0]))
+            width_size = int((float(original_image.size[0]) * float(height_ratio)))
             thumbnail_image = original_image
             thumbnail_image.thumbnail((height_size, width_size))
             thumbnail_image.save('{0}{1}.{2}'.format(image_url[1:], pk1, file_ext))

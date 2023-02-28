@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 def validate_available_hights(value):
     pattern = '^[0-9,]+$'
     if not re.match(pattern, value):
-        raise ValidationError("Enter numbers")
+        raise ValidationError("It should be integers only (e.g. '200' or '100,200')")
     return value
 
 class Plan(models.Model):
