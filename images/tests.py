@@ -56,9 +56,5 @@ class ImagesTest(TestCase):
             2: [{"id":1,"urls":"['http://127.0.0.1:8000/image/1/thumbnail/200?format=json', 'http://127.0.0.1:8000/image/1/thumbnail/400?format=json', 'http://127.0.0.1:8000/image/1/original?format=json']"}],
             3: [{"id":1,"urls":"['http://127.0.0.1:8000/image/1/thumbnail/200?format=json', 'http://127.0.0.1:8000/image/1/thumbnail/400?format=json', 'http://127.0.0.1:8000/image/1/original?format=json', 'http://127.0.0.1:8000/image/1/binary?format=json']"}]
         }
-<<<<<<< HEAD
         #for key in dict_json_answers:
-=======
-        for key in dict_json_answers:
->>>>>>> 98c29e81d2f0257ad394508dabc7e9388b8eeb9c
             
