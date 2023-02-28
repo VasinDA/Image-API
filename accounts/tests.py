@@ -9,8 +9,8 @@ class AccountTest(TestCase):
             original_image_link = False, 
             binary_image_link = False, 
             available_hights = '200')
-        plan_user_default=CustomUser._meta.get_field('plan').get_default()
-        self.default_plan = Plan.objects.get(id=plan_user_default)
+        user_plan=CustomUser._meta.get_field('plan').get_default()
+        self.default_plan = Plan.objects.get(id=user_plan)
         self.user = CustomUser.objects.create(
             username='test', 
             email='test@example.com', 
