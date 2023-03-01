@@ -43,7 +43,7 @@ _______________________________________________________
 
 So, the solution is presented in the form of a Django project, based on the Django Rest Framework and available on GitHub with supportive details in the README file.
 
-###How to install and run the project
+### How to install and run the project
 
 The project can be cloned\copied for the GitHub repo and deployed to a local machine or remote server. Because of testing purpose and limited time, the project can not be considered as a "product ready product" and will require some additional tweaks and configuration if it should be moved to the real production mode.
 
