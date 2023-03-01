@@ -2,36 +2,22 @@ from django.test import TestCase
 from io import BytesIO
 from PIL import Image
 from rest_framework.reverse import reverse
-from django.urls import path, include
 from django.utils import timezone
 from django.core.files.base import File
 from .models import APIImage
 from accounts.models import CustomUser
 from plans.models import Plan
-import base64
-from django.test.client import Client
-
+from rest_framework.test import APIClient
 
 class ImagesTest(TestCase):
     @staticmethod
-    def get_image_file_png(name='test.png', ext='png', size=(1000, 1000), color=(256, 0, 0)):
+    def get_image_file(name, ext='png', size=(1000, 1000), color=(256, 0, 0)):
         file_obj = BytesIO()
         image = Image.new("RGB", size=size, color=color)
         image.save(file_obj, ext)
         file_obj.seek(0)
-        return File(file_obj, name=name)
-    def get_image_file_jpg(name='test.jpg', ext='jpg', size=(1000, 1000), color=(256, 0, 0)):
-        file_obj = BytesIO()
-        image = Image.new("RGB", size=size, color=color)
-        image.save(file_obj, ext)
-        file_obj.seek(0)
-        return File(file_obj, name=name)
-    def get_image_file_wrong_ext(name='test.gif', ext='gif', size=(1000, 1000), color=(256, 0, 0)):
-        file_obj = BytesIO()
-        image = Image.new("RGB", size=size, color=color)
-        image.save(file_obj, ext)
-        file_obj.seek(0)
-    
+        return File(file_obj, name=name + '.' + ext)
+       
     @classmethod
     def setUpTestData(cls):
         Plan.objects.create(
@@ -51,47 +37,51 @@ class ImagesTest(TestCase):
             available_hights = '200,400')
         
         list_plans_id = [1, 2, 3]
-        for plan_id in list_plans_id:
-            user_id = plan_id
-            default_plan = Plan.objects.get(id=plan_id)
+        for key in list_plans_id:
+            user_id = key
+            user_plan = Plan.objects.get(id=key)
             CustomUser.objects.create(
             username='test_{0}'.format(user_id), 
             email='test@example.com', 
             password='password',
-            plan = default_plan,
+            plan = user_plan,
             )
-        list_users_id = [1, 2, 3]
-        for user_id in list_users_id:
+        list_users_ids = [1, 2, 3]
+        for user_id in list_users_ids:
             user = CustomUser.objects.get(id=user_id)
-            expires_after_default = APIImage._meta.get_field('expires_after').get_default() 
             APIImage.objects.create(
                 user = user,
-                image = ImagesTest.get_image_file_png(),
-                expires_after = expires_after_default,
-                created_at = timezone.now(),
+                image = ImagesTest.get_image_file('test', 'png'),
             )
         
-    def test_validate_file_extetion(self):
+    def test_validate_file_invalid(self):
         user = CustomUser.objects.get(id=1)
         expires_after_default = APIImage._meta.get_field('expires_after').get_default() 
         self.assertRaisesMessage(APIImage.objects.create(
             user = user,
-            image = ImagesTest.get_image_file_png(),
-            expires_after = expires_after_default,
-            created_at = timezone.now(),
+            image = ImagesTest.get_image_file('test','gif'),
             ), 'File extension “gif” is not allowed. Allowed extensions are: jpg, jpeg, png.')
        
-    def test_list_immage_plans(self):
-        dict_json_answers = {
-            1: [{"id":1,"urls":"['http://127.0.0.1:8000/image/1/thumbnail/200?format=json']"}],
-            2: [{"id":1,"urls":"['http://127.0.0.1:8000/image/1/thumbnail/200?format=json', 'http://127.0.0.1:8000/image/1/thumbnail/400?format=json', 'http://127.0.0.1:8000/image/1/original?format=json']"}],
-            3: [{"id":1,"urls":"['http://127.0.0.1:8000/image/1/thumbnail/200?format=json', 'http://127.0.0.1:8000/image/1/thumbnail/400?format=json', 'http://127.0.0.1:8000/image/1/original?format=json', 'http://127.0.0.1:8000/image/1/binary?format=json']"}]
+    def test_list_image_for_all_plans(self):
+        expected_responses = {
+            1: [{'id': 1, 'urls': "['http://testserver/image/1/thumbnail/200']"}],
+            2: [{'id': 2, 'urls': "['http://testserver/image/2/thumbnail/200', 'http://testserver/image/2/thumbnail/400', 'http://testserver/image/2/original']"}],
+            3: [{'id': 3, 'urls': "['http://testserver/image/3/thumbnail/200', 'http://testserver/image/3/thumbnail/400', 'http://testserver/image/3/original', 'http://testserver/image/3/binary']"}]
         }
-        for key in dict_json_answers:
-            username = CustomUser.objects.get(id=key).username
-            password = CustomUser.objects.get(id=key).password
-            credentials = f"{username}:{password}".encode('utf-8')
-            encoded_credentials = base64.b64encode(credentials).decode('utf-8')
-            client = Client() 
-            responce = client.get('image_list', HTTP_AUTHORIZATION=f'Basic {encoded_credentials}')
-            print(responce)
+        for user_key in expected_responses:
+            user = CustomUser.objects.get(id=user_key)
+            client = APIClient()
+            client.force_authenticate(user=user)
+            response = client.get(reverse('image_list'))
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json(), expected_responses[user_key])
+
+    def test_image_deteil(self):
+        user_id = 3
+        expected_response = [{'id': 3, 'urls': "['http://testserver/image/3/thumbnail/200', 'http://testserver/image/3/thumbnail/400', 'http://testserver/image/3/original', 'http://testserver/image/3/binary']"}]
+        user = CustomUser.objects.get(id=user_id)
+        client = APIClient()
+        client.force_authenticate(user=user)
+        response = client.get(reverse('image_list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), expected_response)
