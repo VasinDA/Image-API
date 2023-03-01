@@ -26,7 +26,8 @@ Requirements:
 * a link to a thumbnail that's 400px in height
 * a link to the originally uploaded image
 * ability to fetch a link to the (binary) image that expires after a number of seconds (user can specify any number between 300 and 30000)
-* apart from the builtin tiers, admins should be able to create arbitrary tiers with the following things configurable:
+
+apart from the builtin tiers, admins should be able to create arbitrary tiers with the following things configurable:
 * arbitrary thumbnail sizes
 * presence of the link to the originally uploaded file
 * ability to generate expiring links
