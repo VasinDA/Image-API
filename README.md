@@ -32,6 +32,7 @@ Requirements:
 * ability to generate expiring links
 * admin UI should be done via django-admin
 * there should be no custom user UI (just browsable API from Django Rest Framework)
+
 remember about:
 * tests
 * validation
