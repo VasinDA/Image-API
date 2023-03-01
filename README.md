@@ -46,7 +46,7 @@ So, the solution is presented in the form of a Django project, based on the Djan
 The project can be cloned\copied for the GitHub repo and deployed to a local machine or remote server. Because of testing purpose and limited time, the project can not be considered as a "product ready product" and will require some additional tweaks and configuration if it should be moved to the real production mode.
 
 ***Here is the list of important parts of the project:***
-accounts/ : folder with application for customized management of users thru the django-admin panel
+(accounts/) : folder with application for customized management of users thru the django-admin panel
 django_project\ : main configuration for the project
 images\ : main application for the Image API
 media\ : folder for the uploaded images
