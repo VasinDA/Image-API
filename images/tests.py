@@ -78,10 +78,13 @@ class ImagesTest(TestCase):
 
     def test_image_deteil(self):
         user_id = 3
-        expected_response = [{'id': 3, 'urls': "['http://testserver/image/3/thumbnail/200', 'http://testserver/image/3/thumbnail/400', 'http://testserver/image/3/original', 'http://testserver/image/3/binary']"}]
+        image_id = 1
+        expected_response = {'id': 1, 'urls': "['http://testserver/image/1/thumbnail/200', 'http://testserver/image/1/thumbnail/400', 'http://testserver/image/1/original', 'http://testserver/image/1/binary']"}
         user = CustomUser.objects.get(id=user_id)
         client = APIClient()
         client.force_authenticate(user=user)
-        response = client.get(reverse('image_list'))
+        response = client.get(reverse('image_details', kwargs={'pk':image_id}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), expected_response)
+
+    #def test_
