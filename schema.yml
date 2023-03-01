@@ -430,6 +430,7 @@ components:
           type: string
           format: uri
           writeOnly: true
+          pattern: (?:jpg|jpeg|png)$
         urls:
           type: string
           format: uri

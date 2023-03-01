@@ -9,6 +9,7 @@ from django.shortcuts import  get_object_or_404
 from django.http import HttpResponse, FileResponse
 from rest_framework.permissions import IsAuthenticated
 from .serializers import ImageSerializer, DeteilImageSerializer
+from .permissions import isAuthor
 
 class ListImage(generics.ListCreateAPIView):
     serializer_class = ImageSerializer
@@ -31,12 +32,13 @@ class ListImage(generics.ListCreateAPIView):
         return image_ojects
 
 class DetailsImage(generics.RetrieveAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [isAuthor]
     serializer_class = DeteilImageSerializer
     def get_object(self):
         pk = self.kwargs.get('pk')
         user = self.request.user
         image = get_object_or_404(APIImage, pk=pk)
+        self.check_object_permissions(self.request, image)
         plan = Plan.objects.get(id=user.plan_id)
         available_hights = plan.available_hights.split(',')
         urls = []
