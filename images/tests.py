@@ -2,7 +2,6 @@ from django.test import TestCase
 from io import BytesIO
 from PIL import Image
 from rest_framework.reverse import reverse
-from django.utils import timezone
 from django.core.files.base import File
 from .models import APIImage
 from accounts.models import CustomUser
@@ -65,7 +64,7 @@ class ImagesTest(TestCase):
         user = CustomUser.objects.get(id=1)
         self.assertRaisesMessage(APIImage.objects.create(
             user = user,
-            image = ImagesTest.get_image_file('test','png'),
+            image = ImagesTest.get_image_file('test','gif'),
             ), 'File extension “gif” is not allowed. Allowed extensions are: jpg, jpeg, png.')
        
     def test_list_image_for_all_plans(self):
