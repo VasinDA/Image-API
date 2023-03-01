@@ -63,7 +63,7 @@ Clone\copy the folder from GitHub repo
 (Optional) configure and run VEnv (for the local development)
 Install all the required packages `pip install -r requirements.txt`
 Run `python manage.py runserver`
-Access API by provided URL ([http://127.0.0.1]) by default
+Access API by provided URL (http://127.0.0.1) by default
 
 ### Description of Image API
 
