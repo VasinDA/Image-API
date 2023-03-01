@@ -3,5 +3,5 @@ __pycache__/
 **/__pycache__
 .venv/
 media/*
-add into`.gitignore` "!keep"
+"!keep"
 
