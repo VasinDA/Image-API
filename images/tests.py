@@ -89,7 +89,7 @@ class ImagesTest(TestCase):
 
     def test_image_original(self):
         user_id = 3
-        expected_content_type_dict = {1:'image/png', 2:'image/jpeg'}
+        expected_content_type_dict = {1:'image/png', 4:'image/jpeg'}
         user = CustomUser.objects.get(id=user_id)
         APIImage.objects.create(
                 user = user,
@@ -100,8 +100,7 @@ class ImagesTest(TestCase):
         for id in expected_content_type_dict:
             response = client.get(reverse('image_original', kwargs={'pk':id}))
             self.assertEqual(response.status_code, 200)
-            print(response['Content-Type'])
-            #self.assertEqual(response['Content-Type'], expected_content_type_dict[id])
+            self.assertEqual(response['Content-Type'], expected_content_type_dict[id])
     
     #def test_image_binary(self):
 
